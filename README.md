@@ -36,20 +36,19 @@ presented:
   schemas
 - `src/lib` global utility functions
 
-During task assignment you'll mainly working on `app/(blog)/content` directory.
+During task assignment you'll mainly working on `app/(blog)/posts` directory.
 
 ## 📝 Task description
 
-Your task will be change behavior and UI of `/content` and `/content/[slug]` sub
+Your task will be change behavior and UI of `/posts` and `/posts/[slug]` sub
 pages. Please create branch from `main` and present possible solution for:
 
-1. In `/content` sub page change the layout left column so it will show all post
-   categories. The title of this list should be category name. By pressing one
-   of the category the list of posts will be filtered to display only those
-   posts which category were picked. User can pick more than one category if he
-   picks 'n' categories the posts list will show all posts from those 'n'
-   categories.
-2. In `/content/[slug]` change layout left column so it will show list of all
+1. In `/posts` sub page change the layout left column so it will show all post
+   categories. The title of this list should be "Categories". By pressing one of
+   the category the list of posts will be filtered to display only those posts
+   which category were picked. User can pick more than one category if he picks
+   'n' categories the posts list will show all posts from those 'n' categories.
+2. In `/posts/[slug]` change layout left column so it will show list of all
    posts from category on which user currently is. The title of this list should
    be category name. List item should redirect to post after click.
 
