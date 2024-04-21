@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import NextLink from 'next/link';
-import { notFound, usePathname } from 'next/navigation';
+import { notFound, usePathname, useSearchParams } from 'next/navigation';
 
 import { packs } from '~/lib/packs';
 import { cn, isNonEmptyArray } from '~/lib/utils';
@@ -10,13 +10,11 @@ import { cn, isNonEmptyArray } from '~/lib/utils';
 export type SidebarNavigationProps = {
 	navGroups: Array<{
 		heading: { id: string; label: string };
-		navItems: Array<{ href: string; label: string }>;
+		navItems: Array<{ href: string; label: string, highlighted?:boolean }>;
 	}>;
 };
 
 export function SidebarNavigation({ navGroups }: SidebarNavigationProps) {
-	const pathname = usePathname();
-
 	if (!isNonEmptyArray(navGroups)) return notFound();
 
 	return (
@@ -44,8 +42,7 @@ export function SidebarNavigation({ navGroups }: SidebarNavigationProps) {
 							className="flex flex-col gap-2"
 							role="list"
 						>
-							{navItems.map(({ href, label }) => {
-								const isHighlighted = pathname === href;
+							{navItems.map(({ href, label,highlighted }) => {
 								return (
 									<li key={href}>
 										<NextLink
@@ -55,14 +52,13 @@ export function SidebarNavigation({ navGroups }: SidebarNavigationProps) {
 											)}
 											href={href}
 										>
-											{isHighlighted ? (
+											{highlighted ? (
 												<span
 													aria-hidden="true"
 													className="pointer-events-none absolute inset-y-0 left-0 flex items-center"
 												>
 													<motion.span
 														className="h-3 w-0.5 rounded-r-md bg-blue-500"
-														layoutId="left-nav-indicator"
 														transition={{
 															type: 'spring',
 															bounce: 0.2,

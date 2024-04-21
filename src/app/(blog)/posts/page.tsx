@@ -3,9 +3,35 @@ import { ThreeColumnLayout } from '~/components/three-column-layout';
 import { PostsList } from '~/components/posts-list';
 import { reader } from '~/keystatic/reader';
 
-export default async function PostsListingPage() {
+export default async function PostsListingPage({searchParams}) {
 	const posts = await reader.collections.content.all();
+	// Get unique categories for nav using Set
+	const categoriesSet = new Set(posts.map((post)=>{
+		return post.entry.category
+	}))
+	const navCategories = Array.from(categoriesSet)
 
+	const queryCategory = searchParams?.category?.split(',') || [] ;
+
+	// Filter posts based on selected category
+	const activePosts = posts.filter((p)=> {
+		if(queryCategory.length === 0)
+			return p;
+		else 
+			return queryCategory.includes(p.entry.category); 
+	})
+
+	// Create unique urls with category filters using query parameters
+	const getQueryValue = (category: string) => {
+		if( queryCategory.includes(category)) {
+			const filteredCategories = queryCategory.filter((q) => {
+				return q !== category
+			})
+			return filteredCategories.length > 0 ? '?category='+filteredCategories.join(',') : ''
+		} else {
+			return '?category='+[...queryCategory,category].join(',')
+		}
+	}
 	return (
 		<ThreeColumnLayout
 			leftSidebar={
@@ -15,11 +41,12 @@ export default async function PostsListingPage() {
 						{
 							heading: {
 								id: 'posts-heading',
-								label: 'Posts',
+								label: 'Categories',
 							},
-							navItems: posts.map((post) => ({
-								href: `/content/${post.slug}`,
-								label: post.entry.title,
+							navItems: navCategories.map((category:string) => ({
+								href: `/posts${getQueryValue(category)}`,
+								label: category,
+								highlighted:queryCategory.includes(category)
 							})),
 						},
 					]}
@@ -27,7 +54,7 @@ export default async function PostsListingPage() {
 			}
 		>
 			<PostsList
-				posts={posts.map(({ slug, entry: { title, category } }) => ({
+				posts={activePosts.map(({ slug, entry: { title, category } }) => ({
 					slug,
 					entry: { title, category },
 				}))}

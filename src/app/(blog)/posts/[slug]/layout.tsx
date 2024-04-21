@@ -15,11 +15,12 @@ export default async function PostLayout({
 }) {
 	const posts = await reader.collections.content.all();
 	const post = await reader.collections.content.read(params.slug);
-
 	if (!post) notFound();
 
 	const headings = getHeadingsFromContent(await post.content());
-
+	const navItemList = posts.filter((p)=> {
+		return p.entry.category === post.category
+	})
 	return (
 		<ThreeColumnLayout
 			leftSidebar={
@@ -29,11 +30,12 @@ export default async function PostLayout({
 						{
 							heading: {
 								id: 'posts-heading',
-								label: 'Posts',
+								label: post.category[0].toUpperCase() + post.category.slice(1,post.category.length),
 							},
-							navItems: posts.map((post) => ({
-								href: `/content/${post.slug}`,
-								label: post.entry.title,
+							navItems: navItemList.map((mappost) => ({
+								href: `${mappost.slug}`,
+								label: mappost.entry.title,
+								highlighted: post.title === mappost.entry.title
 							})),
 						},
 					]}
