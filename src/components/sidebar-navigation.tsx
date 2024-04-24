@@ -1,20 +1,13 @@
-'use client';
-
+'use client'
 import { motion } from 'framer-motion';
 import NextLink from 'next/link';
 import { notFound, usePathname } from 'next/navigation';
 
 import { packs } from '~/lib/packs';
 import { cn, isNonEmptyArray } from '~/lib/utils';
+import { SidebarNavigationType } from '~/types/app';
 
-export type SidebarNavigationProps = {
-	navGroups: Array<{
-		heading: { id: string; label: string };
-		navItems: Array<{ href: string; label: string }>;
-	}>;
-};
-
-export function SidebarNavigation({ navGroups }: SidebarNavigationProps) {
+export function SidebarNavigation({ navGroups }: SidebarNavigationType) {
 	const pathname = usePathname();
 
 	if (!isNonEmptyArray(navGroups)) return notFound();
@@ -34,7 +27,7 @@ export function SidebarNavigation({ navGroups }: SidebarNavigationProps) {
 				{navGroups.map(({ heading, navItems }) => (
 					<div key={heading.id}>
 						<h2
-							className="text-lg text-gray-900 font-strong dark:text-white"
+							className="text-lg bg-gray-700 py-1 rounded text-white text-center my-3 font-strong dark:text-white capitalize"
 							id={heading.id}
 						>
 							{heading.label}
@@ -47,7 +40,8 @@ export function SidebarNavigation({ navGroups }: SidebarNavigationProps) {
 							{navItems.map(({ href, label }) => {
 								const isHighlighted = pathname === href;
 								return (
-									<li key={href}>
+									<li key={label}>
+
 										<NextLink
 											className={cn(
 												'relative block overflow-hidden rounded-xl px-4 py-2 text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800',
@@ -55,22 +49,24 @@ export function SidebarNavigation({ navGroups }: SidebarNavigationProps) {
 											)}
 											href={href}
 										>
-											{isHighlighted ? (
-												<span
-													aria-hidden="true"
-													className="pointer-events-none absolute inset-y-0 left-0 flex items-center"
-												>
-													<motion.span
-														className="h-3 w-0.5 rounded-r-md bg-blue-500"
-														layoutId="left-nav-indicator"
-														transition={{
-															type: 'spring',
-															bounce: 0.2,
-															duration: 0.6,
-														}}
-													/>
-												</span>
-											) : null}
+											{
+												isHighlighted ? (
+													<span
+														aria-hidden="true"
+														className="pointer-events-none absolute inset-y-0 left-0 flex items-center"
+													>
+														<motion.span
+															className="h-3 w-0.5 rounded-r-md bg-blue-500"
+															layoutId="left-nav-indicator"
+															transition={{
+																type: 'spring',
+																bounce: 0.2,
+																duration: 0.6,
+															}}
+														/>
+													</span>
+												) : <></>
+											}
 											{label}
 										</NextLink>
 									</li>
