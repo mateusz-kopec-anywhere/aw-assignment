@@ -1,37 +1,18 @@
-import { SidebarNavigation } from '~/components/sidebar-navigation';
-import { ThreeColumnLayout } from '~/components/three-column-layout';
-import { PostsList } from '~/components/posts-list';
 import { reader } from '~/keystatic/reader';
-
+import Posts from '~/components/posts';
 export default async function PostsListingPage() {
 	const posts = await reader.collections.content.all();
 
+	// passing unique set of categories to Posts component
+	const categories = [...new Set(posts.map((post) => post.entry.category))];
+
 	return (
-		<ThreeColumnLayout
-			leftSidebar={
-				// TODO: Replace me with categories filters
-				<SidebarNavigation
-					navGroups={[
-						{
-							heading: {
-								id: 'posts-heading',
-								label: 'Posts',
-							},
-							navItems: posts.map((post) => ({
-								href: `/content/${post.slug}`,
-								label: post.entry.title,
-							})),
-						},
-					]}
-				/>
-			}
-		>
-			<PostsList
-				posts={posts.map(({ slug, entry: { title, category } }) => ({
-					slug,
-					entry: { title, category },
-				}))}
-			/>
-		</ThreeColumnLayout>
+		<Posts
+			categories={categories}
+			posts={posts.map(({ slug, entry: { title, category } }) => ({
+				slug,
+				entry: { title, category },
+			}))}
+		/>
 	);
 }

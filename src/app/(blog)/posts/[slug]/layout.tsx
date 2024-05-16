@@ -5,6 +5,7 @@ import { TableOfContents } from '~/components/table-of-contents';
 import { ThreeColumnLayout } from '~/components/three-column-layout';
 import { reader } from '~/keystatic/reader';
 import { getHeadingsFromContent } from '~/lib/get-headings-from-content';
+import { capitalise } from '~/lib/utils';
 
 export default async function PostLayout({
 	children,
@@ -29,12 +30,14 @@ export default async function PostLayout({
 						{
 							heading: {
 								id: 'posts-heading',
-								label: 'Posts',
+								label: capitalise(post.category),
 							},
-							navItems: posts.map((post) => ({
-								href: `/content/${post.slug}`,
-								label: post.entry.title,
-							})),
+							navItems: posts
+								.filter((p) => p.entry.category === post.category)
+								.map((post) => ({
+									href: `/posts/${post.slug}`,
+									label: post.entry.title,
+								})),
 						},
 					]}
 				/>
