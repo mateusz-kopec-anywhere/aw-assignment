@@ -1,38 +1,92 @@
-import { notFound } from 'next/navigation';
+'use client';
 
+import { notFound } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { SidebarNavigation } from '~/components/sidebar-navigation';
 import { TableOfContents } from '~/components/table-of-contents';
 import { ThreeColumnLayout } from '~/components/three-column-layout';
 import { reader } from '~/keystatic/reader';
 import { getHeadingsFromContent } from '~/lib/get-headings-from-content';
 
-export default async function PostLayout({
+interface Content {
+	level: number;
+	type: string;
+	children: Array<Object>;
+}
+
+interface Post {
+	category: string;
+	title: string;
+	authors: Array<string>;
+	headings: Array<Content>;
+}
+
+interface Posts {
+	entry: Post;
+	slug: string;
+}
+
+export default function PostLayout({
 	children,
 	params,
 }: {
 	children: React.ReactNode;
 	params: { slug: string };
 }) {
-	const posts = await reader.collections.content.all();
-	const post = await reader.collections.content.read(params.slug);
+	const [posts, setPosts] = useState<Posts[]>([]);
+	const [post, setPost] = useState<Post>();
+	const [selectedposts, setSelectedPosts] = useState<Posts[]>([]);
 
-	if (!post) notFound();
+	useEffect(() => {
+		fetch('http://localhost:3000/api/posts')
+			.then((res) => {
+				return res.json();
+			})
+			.then((data) => {
+				setPosts(data);
+			});
+	}, []);
 
-	const headings = getHeadingsFromContent(await post.content());
+	useEffect(() => {
+		fetch('http://localhost:3000/api/post', {
+			method: 'POST',
+			body: JSON.stringify({
+				params: params,
+			}),
+		})
+			.then((res) => {
+				return res.json();
+			})
+			.then((data) => {
+				setPost(data);
+				if (!data) notFound();
+			});
+	}, []);
+
+	useEffect(() => {
+		if (post?.category && posts.length) {
+			let filteredList = posts.filter(
+				(item) => post.category === item.entry.category
+			);
+			setSelectedPosts(filteredList);
+		}
+		console.log('==>', post);
+	}, [post?.category, posts]);
+
+	const headings = getHeadingsFromContent(post?.headings);
 
 	return (
 		<ThreeColumnLayout
 			leftSidebar={
-				// TODO: Render posts only from category that current post is
 				<SidebarNavigation
 					navGroups={[
 						{
 							heading: {
 								id: 'posts-heading',
-								label: 'Posts',
+								label: post?.category.toUpperCase(),
 							},
-							navItems: posts.map((post) => ({
-								href: `/content/${post.slug}`,
+							navItems: selectedposts.map((post) => ({
+								href: `/posts/${post.slug}`,
 								label: post.entry.title,
 							})),
 						},
@@ -40,7 +94,9 @@ export default async function PostLayout({
 				/>
 			}
 			rightSidebar={
-				headings.length > 0 ? <TableOfContents headings={headings} /> : null
+				post?.headings?.length > 0 ? (
+					<TableOfContents headings={headings} />
+				) : null
 			}
 		>
 			{children}

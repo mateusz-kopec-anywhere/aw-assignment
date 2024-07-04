@@ -1,33 +1,67 @@
-import { SidebarNavigation } from '~/components/sidebar-navigation';
+'use client';
+
+import { useEffect, useState } from 'react';
+import { SidebarFilter } from '~/components/sidebar-filter';
 import { ThreeColumnLayout } from '~/components/three-column-layout';
 import { PostsList } from '~/components/posts-list';
-import { reader } from '~/keystatic/reader';
 
-export default async function PostsListingPage() {
-	const posts = await reader.collections.content.all();
+export default function PostsListingPage() {
+	const [posts, setPosts] = useState([]);
+	const [categories, setCategories] = useState([]);
+	const [filteredCategories, setFilteredCategories] = useState([]);
+	const [filteredPosts, setFilteredPosts] = useState([]);
+
+	useEffect(() => {
+		fetch('http://localhost:3000/api/posts')
+			.then((res) => {
+				return res.json();
+			})
+			.then((data) => {
+				setPosts(data);
+			});
+	}, []);
+
+	useEffect(() => {
+		if (posts.length) {
+			const cat = [];
+			posts.forEach((book) => {
+				if (!cat.includes(book?.entry?.category)) cat.push(book.entry.category);
+			});
+			setCategories(cat);
+			setFilteredCategories(cat);
+		}
+	}, [posts]);
+
+	useEffect(() => {
+		const postslist = [];
+		posts.forEach((post) => {
+			if (filteredCategories.includes(post?.entry?.category))
+				postslist.push(post);
+		});
+		setFilteredPosts(postslist);
+	}, [filteredCategories]);
+
+	const updateFilteredCategories = (category: string) => {
+		filteredCategories.includes(category)
+			? setFilteredCategories(
+					filteredCategories.filter((item) => item !== category)
+			  )
+			: setFilteredCategories([...filteredCategories, category]);
+	};
 
 	return (
 		<ThreeColumnLayout
 			leftSidebar={
-				// TODO: Replace me with categories filters
-				<SidebarNavigation
-					navGroups={[
-						{
-							heading: {
-								id: 'posts-heading',
-								label: 'Posts',
-							},
-							navItems: posts.map((post) => ({
-								href: `/content/${post.slug}`,
-								label: post.entry.title,
-							})),
-						},
-					]}
+				<SidebarFilter
+					heading="Categories"
+					availableCategories={categories}
+					filteredCategories={filteredCategories}
+					onCategoryClick={updateFilteredCategories}
 				/>
 			}
 		>
 			<PostsList
-				posts={posts.map(({ slug, entry: { title, category } }) => ({
+				posts={filteredPosts.map(({ slug, entry: { title, category } }) => ({
 					slug,
 					entry: { title, category },
 				}))}
