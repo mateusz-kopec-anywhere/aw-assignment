@@ -34,7 +34,7 @@ export function SidebarNavigation({ navGroups }: SidebarNavigationProps) {
 				{navGroups.map(({ heading, navItems }) => (
 					<div key={heading.id}>
 						<h2
-							className="text-lg text-gray-900 font-strong dark:text-white"
+							className="text-lg text-gray-900 capitalize mb-2 font-strong dark:text-white"
 							id={heading.id}
 						>
 							{heading.label}

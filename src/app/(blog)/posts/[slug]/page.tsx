@@ -18,7 +18,7 @@ export default async function Post({ params }: { params: { slug: string } }) {
 		<div className="prose dark:prose-invert">
 			<h1 className="text-4xl font-strong">{post.title}</h1>
 			<span>Author: {post.authors}</span>
-			<DocumentRenderer document={await post.content()} />
+			{/* <DocumentRenderer document={await post.content()} /> */}
 		</div>
 	);
 }

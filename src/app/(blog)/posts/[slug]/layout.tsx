@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation';
-
 import { SidebarNavigation } from '~/components/sidebar-navigation';
 import { TableOfContents } from '~/components/table-of-contents';
 import { ThreeColumnLayout } from '~/components/three-column-layout';
@@ -17,22 +16,22 @@ export default async function PostLayout({
 	const post = await reader.collections.content.read(params.slug);
 
 	if (!post) notFound();
+	const categoryOnlyPosts = posts.filter(item => item.entry.category == post.category);
 
 	const headings = getHeadingsFromContent(await post.content());
 
 	return (
 		<ThreeColumnLayout
 			leftSidebar={
-				// TODO: Render posts only from category that current post is
 				<SidebarNavigation
 					navGroups={[
 						{
 							heading: {
 								id: 'posts-heading',
-								label: 'Posts',
+								label: post.category,
 							},
-							navItems: posts.map((post) => ({
-								href: `/content/${post.slug}`,
+							navItems: categoryOnlyPosts.map((post) => ({
+								href: `/posts/${post.slug}`,
 								label: post.entry.title,
 							})),
 						},
