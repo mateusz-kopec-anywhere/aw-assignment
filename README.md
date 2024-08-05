@@ -52,6 +52,7 @@ pages. Please create branch from `main` and present possible solution for:
    posts from category on which user currently is. The title of this list should
    be category name. List item should redirect to post after click.
 
-Please don't spend longer than 3-4 hrs on the assignment. When your work will be
-done create Pull Request to main branch keeping best practices of git flow you
-were using so far.
+When your work will be done create Pull Request to main branch keeping best
+practices of git flow you were using so far. Please provide your solution in
+best way you think it can be done. Use coding practices that you usually use.
+Leave code clean and ready to review.

@@ -42,3 +42,6 @@ public/playroom
 
 # vscode
 .vscode
+
+# idx
+.idx/
