@@ -1,7 +1,7 @@
 'use client';
 
 import NextLink from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 export function PostsList({
 	posts,
@@ -14,14 +14,18 @@ export function PostsList({
 		};
 	}[];
 }) {
-	const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const selectedCategory = JSON.parse(searchParams.get('category')) || [];
+
+  const formattedPostList = selectedCategory?.length
+    ? posts?.filter((post) => selectedCategory.includes(post.entry.category))
+    : posts;
 
 	return (
 		<div className="prose dark:prose-invert">
 			<ul className="list-none p-0">
-				{posts.map((post) => {
+				{formattedPostList.map((post) => {
 					const href = `/posts/${post.slug}`;
-
 					return (
 						<li key={href}>
 							<NextLink
