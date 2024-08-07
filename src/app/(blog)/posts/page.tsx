@@ -1,4 +1,4 @@
-import { MultiSelectTab } from '~/components/MultiSelectTab';
+import { MultiSelectTab } from '~/components/multiselect-tab';
 import { ThreeColumnLayout } from '~/components/three-column-layout';
 import { PostsList } from '~/components/posts-list';
 
