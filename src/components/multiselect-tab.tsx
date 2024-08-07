@@ -31,14 +31,14 @@ export const MultiSelectTab = ({ tabItems }: IMultiSelectTabProps) => {
   };
 
   return (
-    <div className='gap-4 pb-20 pt-10 text-base lg:text-sm hidden lg:relative lg:flex'>
+    <div className='gap-4 pb-20 pt-10 text-base lg:text-sm hidden lg:block text-center'>
       <h2
         className="text-lg text-gray-900 font-strong dark:text-white"
       >
         Categories
       </h2>
       <ul
-        className='flex flex-col gap-2 list-none mt-2'
+        className='flex flex-col gap-2 list-none mt-2 pt-4 p-8'
         role='list'
       >
         {
@@ -51,7 +51,7 @@ export const MultiSelectTab = ({ tabItems }: IMultiSelectTabProps) => {
               key={tabItem.id}
               onClick={() => tabSelectHandler(tabItem.label.toLowerCase())}
             >
-              <span className='items-center'>
+              <span className='items-center w-full'>
                 {tabItem.label}
               </span>
             </li>
