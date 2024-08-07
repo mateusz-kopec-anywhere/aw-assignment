@@ -20,12 +20,10 @@ export default async function PostsListingPage() {
 			}
 		>
 			<PostsList
-				posts={postList.map(({ slug, entry: { title, category } }) => {
-          return {
-            slug,
-            entry: { title, category },
-          }
-				})}
+				posts={postList.map(({ slug, entry: { title, category } }) => ({
+					slug,
+					entry: { title, category },
+				}))}
 			/>
 		</ThreeColumnLayout>
 	);
