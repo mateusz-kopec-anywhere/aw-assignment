@@ -1,33 +1,26 @@
-import { SidebarNavigation } from '~/components/sidebar-navigation';
+import { MultiSelectTab } from '~/components/multiselect-tab';
 import { ThreeColumnLayout } from '~/components/three-column-layout';
 import { PostsList } from '~/components/posts-list';
+
 import { reader } from '~/keystatic/reader';
 
 export default async function PostsListingPage() {
-	const posts = await reader.collections.content.all();
+	const categories = await reader.collections.categories.all();
+	const postList = await reader.collections.content.all();
 
 	return (
 		<ThreeColumnLayout
 			leftSidebar={
-				// TODO: Replace me with categories filters
-				<SidebarNavigation
-					navGroups={[
-						{
-							heading: {
-								id: 'posts-heading',
-								label: 'Posts',
-							},
-							navItems: posts.map((post) => ({
-								href: `/content/${post.slug}`,
-								label: post.entry.title,
-							})),
-						},
-					]}
+				<MultiSelectTab
+					tabItems={categories.map((category, index) => ({
+            id: index,
+            label: category.entry.category,
+          }))}
 				/>
 			}
 		>
 			<PostsList
-				posts={posts.map(({ slug, entry: { title, category } }) => ({
+				posts={postList.map(({ slug, entry: { title, category } }) => ({
 					slug,
 					entry: { title, category },
 				}))}

@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { headers } from "next/headers";
 
 import { SidebarNavigation } from '~/components/sidebar-navigation';
 import { TableOfContents } from '~/components/table-of-contents';
@@ -13,8 +14,15 @@ export default async function PostLayout({
 	children: React.ReactNode;
 	params: { slug: string };
 }) {
+
+  const headerList = headers();
+  const pathname = headerList.get("x-current-path");
+  const selectedCategory = headerList.get("x-current-category");
+
 	const posts = await reader.collections.content.all();
 	const post = await reader.collections.content.read(params.slug);
+
+  const currentPost = pathname?.split('/')?.pop();
 
 	if (!post) notFound();
 
@@ -23,7 +31,6 @@ export default async function PostLayout({
 	return (
 		<ThreeColumnLayout
 			leftSidebar={
-				// TODO: Render posts only from category that current post is
 				<SidebarNavigation
 					navGroups={[
 						{
@@ -31,10 +38,12 @@ export default async function PostLayout({
 								id: 'posts-heading',
 								label: 'Posts',
 							},
-							navItems: posts.map((post) => ({
-								href: `/content/${post.slug}`,
-								label: post.entry.title,
-							})),
+							navItems: posts
+                .filter((post) => (post.entry.category === selectedCategory) && (post.slug !== currentPost))
+                .map((post) => ({
+                  href: `/posts/${post.slug}/?category=${selectedCategory}`,
+                  label: post.entry.title,
+                })),
 						},
 					]}
 				/>
