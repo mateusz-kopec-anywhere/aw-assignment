@@ -25,7 +25,7 @@ export function PostsList({
 		<div className="prose dark:prose-invert">
 			<ul className="list-none p-0">
 				{formattedPostList.map((post) => {
-					const href = `/posts/${post.slug}`;
+					const href = `/posts/${post.slug}/?category=${post.entry.category}`;
 					return (
 						<li key={href}>
 							<NextLink
